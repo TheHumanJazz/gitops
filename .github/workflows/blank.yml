@@ -20,6 +20,9 @@ jobs:
     strategy:
       matrix:
         tenant: [tenant1, tenant2]  # Add more tenants as needed
+        platform: [x86_64, arm64]  # Add more platforms as needed
+        os: [ubuntu-latest, windows-latest]  # Add more OS as needed
+        version: [1, 2, 3]          # Add more versions as needed
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -42,5 +45,5 @@ jobs:
       - name: Upload Packaged Template as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hello.txt
+          name: hello-${{ matrix.version }}.txt
           path: hello.txt
