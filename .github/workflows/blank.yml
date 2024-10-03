@@ -17,6 +17,7 @@ on:
         description: 'Select tenant'
         required: true
         default: tenant1
+        type: choice
         options:
           - tenant1
           - tenant2
@@ -24,7 +25,8 @@ on:
       environment:
         description: 'Select environment'
         required: true
-        default: 'staging'
+        type: environment
+        default: 'dev'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
