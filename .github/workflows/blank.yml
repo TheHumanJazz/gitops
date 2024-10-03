@@ -1,26 +1,26 @@
 name: CI
 
 on:
-  # push:
-  #   branches: [ "main" ]
-  # pull_request:
-  #   branches: [ "main" ]
-  workflow_dispatch:
-    inputs:
-      tenant:
-        description: 'Select tenant'
-        required: true
-        default: tenant1
-        type: choice
-        options:
-          - tenant1
-          - tenant2
-          - tenant3
-      environment:
-        description: 'Select environment'
-        required: true
-        type: environment
-        default: 'dev'
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # workflow_dispatch:
+  #   inputs:
+  #     tenant:
+  #       description: 'Select tenant'
+  #       required: true
+  #       default: tenant1
+  #       type: choice
+  #       options:
+  #         - tenant1
+  #         - tenant2
+  #         - tenant3
+  #     environment:
+  #       description: 'Select environment'
+  #       required: true
+  #       type: environment
+  #       default: 'dev'
 
 jobs:
   build:
@@ -40,7 +40,7 @@ jobs:
           name: hello.txt
           path: hello.txt
 
-  deploy:
+  DeployDev:
     strategy:
       matrix:
         tenant: [tenant1, tenant2, tenant3]  # Add more tenants as needed
@@ -48,7 +48,9 @@ jobs:
         # os: [ubuntu-latest, windows-latest]  # Add more OS as needed
         # version: [1, 2, 3]          # Add more versions as needed
     runs-on: ubuntu-latest
-    environment: dev
+    if: github.event_name == 'pull_request'
+    environment:
+      name: dev
     needs: [build]
     steps:
       - uses: actions/checkout@v4
@@ -60,3 +62,46 @@ jobs:
         run: |
           ls -a
 
+  DeployStaging:
+    strategy:
+      matrix:
+        tenant: [tenant1, tenant2, tenant3]  # Add more tenants as needed
+        # platform: [x86_64, arm64]  # Add more platforms as needed
+        # os: [ubuntu-latest, windows-latest]  # Add more OS as needed
+        # version: [1, 2, 3]          # Add more versions as needed
+    runs-on: ubuntu-latest
+    if: github.event.ref == 'refs/heads/main'
+    environment:
+      name: dev
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Packaged Template as Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hello.txt
+      - name: Run a multi-line script
+        run: |
+          ls -a
+
+  DeployProd:
+    strategy:
+      matrix:
+        tenant: [tenant1, tenant2, tenant3]  # Add more tenants as needed
+        # platform: [x86_64, arm64]  # Add more platforms as needed
+        # os: [ubuntu-latest, windows-latest]  # Add more OS as needed
+        # version: [1, 2, 3]          # Add more versions as needed
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    environment:
+      name: dev
+    needs: [DeployStaging]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Packaged Template as Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hello.txt
+      - name: Run a multi-line script
+        run: |
+          ls -a
