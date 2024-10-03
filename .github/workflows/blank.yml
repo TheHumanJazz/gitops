@@ -1,16 +1,10 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   # push:
   #   branches: [ "main" ]
   # pull_request:
   #   branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
       tenant:
@@ -28,31 +22,18 @@ on:
         type: environment
         default: 'dev'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # strategy:
-    #   matrix:
-    #     tenant: [tenant1, tenant2, tenant3]  # Add more tenants as needed
-        # platform: [x86_64, arm64]  # Add more platforms as needed
-        # os: [ubuntu-latest, windows-latest]  # Add more OS as needed
-        # version: [1, 2, 3]          # Add more versions as needed
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Run a one-line script
         run: echo Hello, world!
-
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
           echo hello > hello.txt
-
       - name: Upload Packaged Template as Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -66,18 +47,15 @@ jobs:
         # platform: [x86_64, arm64]  # Add more platforms as needed
         # os: [ubuntu-latest, windows-latest]  # Add more OS as needed
         # version: [1, 2, 3]          # Add more versions as needed
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
     environment: dev
-    needs: build
+    needs: [build]
     steps:
       - uses: actions/checkout@v4
-
       - name: Download Packaged Template as Artifact
         uses: actions/download-artifact@v4
         with:
           name: hello.txt
-
       - name: Run a multi-line script
         run: |
           ls -a
