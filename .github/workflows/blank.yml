@@ -16,7 +16,11 @@ on:
       tenant:
         description: 'Select tenant'
         required: true
-        default: 'tenant1'
+        default: tenant1
+        options:
+          - tenant1
+          - tenant2
+          - tenant3
       environment:
         description: 'Select environment'
         required: true
@@ -28,7 +32,7 @@ jobs:
   build:
     strategy:
       matrix:
-        tenant: [tenant1, tenant2]  # Add more tenants as needed
+        tenant: [tenant1, tenant2, tenant3]  # Add more tenants as needed
         # platform: [x86_64, arm64]  # Add more platforms as needed
         # os: [ubuntu-latest, windows-latest]  # Add more OS as needed
         # version: [1, 2, 3]          # Add more versions as needed
